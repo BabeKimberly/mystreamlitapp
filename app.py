@@ -1,0 +1,37 @@
+import os
+import pickle
+import streamlit as st
+
+# Set page configuration
+st.set_page_config(page_title="Preeclampsia Prediction App",
+                   layout="wide",
+                   page_icon="🧑‍⚕️")
+
+# Get the working directory of the app
+working_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the saved Preeclampsia model
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'trained_model.sav')
+preeclampsia_model = pickle.load(open(model_path, 'rb'))
+
+# Preeclampsia Prediction Page
+st.title("Preeclampsia Prediction using ML")
+
+col1, col2, col3 = st.columns(3)
+with col1: age = st.text_input('Age')
+with col2: gest_age = st.text_input('Gestational Age')
+with col3: height = st.text_input('Height (cm)')
+with col1: weight = st.text_input('Weight (kg)')
+with col2: bmi = st.text_input('BMI')
+with col3: sysbp = st.text_input('Systolic Blood Pressure')
+with col1: diabp = st.text_input('Diastolic Blood Pressure')
+
+# Add more input fields as per the model requirements
+
+preeclampsia_diagnosis = ''
+if st.button("Preeclampsia Test Result"):
+    user_input = [float(x) for x in [age, gest_age, height, weight, bmi, sysbp, diabp]]
+    # Add more features to user_input as needed
+    preeclampsia_prediction = preeclampsia_model.predict([user_input])
+    preeclampsia_diagnosis = "The person is at risk of preeclampsia" if preeclampsia_prediction[0] == 1 else "The person is not at risk of preeclampsia"
+st.success(preeclampsia_diagnosis)
